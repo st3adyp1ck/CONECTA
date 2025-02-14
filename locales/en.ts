@@ -1,0 +1,15 @@
+export default {
+  explore: 'Explore',
+  map: 'Map',
+  transport: 'Transport',
+  calendar: 'Calendar',
+  featuredNow: 'Featured Now',
+  seeAll: 'See All',
+  reviews: 'Reviews',
+  writeReview: 'Write a Review',
+  events: 'Events',
+  addToCalendar: 'Add to Calendar',
+  settings: 'Settings',
+  language: 'Language',
+  notifications: 'Notifications',
+};
