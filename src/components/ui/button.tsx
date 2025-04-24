@@ -1,8 +1,10 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { createRipple } from "@/lib/ripple"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -36,22 +38,62 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  enableRipple?: boolean;
+  disableAnimation?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+  ({
+    className,
+    variant,
+    size,
+    asChild = false,
+    enableRipple = true,
+    disableAnimation = false,
+    onClick,
+    ...props
+  }, ref) => {
+    const Comp = asChild ? Slot : motion.button;
+
+    // Handle click with ripple effect
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (enableRipple) {
+        createRipple(e);
+      }
+
+      if (onClick) {
+        onClick(e);
+      }
+    };
+
+    // Framer Motion variants
+    const motionProps = !disableAnimation ? {
+      whileHover: { scale: 1.02 },
+      whileTap: { scale: 0.98 },
+      transition: {
+        duration: 0.2,
+        type: "spring",
+        stiffness: 400,
+        damping: 17
+      }
+    } : {};
+
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          enableRipple && "ripple-container overflow-hidden"
+        )}
         ref={ref}
+        onClick={handleClick}
+        {...motionProps}
         {...props}
       />
-    )
+    );
   }
-)
+);
 Button.displayName = "Button"
 
 export { Button, buttonVariants }

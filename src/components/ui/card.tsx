@@ -2,19 +2,24 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
-      className
-    )}
-    {...props}
-  />
-))
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  featured?: boolean;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, featured = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        featured
+          ? "featured-card"
+          : "rounded-xl border bg-gradient-to-r from-purple-500/5 via-indigo-500/5 to-blue-500/5 text-card-foreground shadow-soft",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
@@ -29,13 +34,22 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  featured?: boolean;
+}
+
 const CardTitle = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+  CardTitleProps
+>(({ className, featured = false, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      featured
+        ? "featured-title font-semibold leading-none tracking-tight"
+        : "font-semibold leading-none tracking-tight",
+      className
+    )}
     {...props}
   />
 ))
@@ -73,4 +87,13 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  type CardProps,
+  type CardTitleProps
+}
